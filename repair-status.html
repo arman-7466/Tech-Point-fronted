@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Repair Status — Tech Point</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="glass nav">
+    <a class="brand" href="index.html"><span>TECH</span> POINT</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="products.html">Products</a>
+      <a href="home-service.html">Home Service</a>
+      <a href="repair-status.html">Repair Status</a>
+    </nav>
+    <a class="pill" href="login.html">Login</a>
+  </header>
+
+  <main class="page">
+    <div class="page-title">
+      <span class="eyebrow">TRACKING</span>
+      <h1>Where is my phone?</h1>
+      <p>Job ID ya Phone Number enter karke status check karo.</p>
+    </div>
+
+    <div class="glass booking" style="max-width: 500px; margin: 0 auto;">
+      <label>
+        Job ID ya Phone Number
+        <input type="text" id="jobIdInput" placeholder="e.g. TP-657794 ya 9528..." required>
+      </label>
+
+      <button type="button" class="btn" onclick="trackStatus()" style="margin-top: 15px; width: 100%;">Check status</button>
+
+      <!-- Status Display Box -->
+      <div id="statusResult" style="margin-top: 20px;"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="brand"><span>TECH</span> POINT</div>
+    <a href="agreement.html">Agreement</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+    <small>© 2026 Tech Point</small>
+  </footer>
+
+  <script>
+    async function trackStatus() {
+      const inputVal = document.getElementById("jobIdInput").value.trim();
+      const statusBox = document.getElementById("statusResult");
+
+      if (!inputVal) {
+        alert("Kripya Job ID ya Phone Number daalein.");
+        return;
+      }
+
+      statusBox.innerHTML = "<p style='color: #aaa;'>Searching status...</p>";
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/status/${encodeURIComponent(inputVal)}`);
+        const data = await response.json();
+
+        if (data.success) {
+          statusBox.innerHTML = `
+            <div style="background: rgba(255,255,255,0.08); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); text-align: left;">
+              <p><strong>Job ID:</strong> ${data.jobId}</p>
+              <p><strong>Name:</strong> ${data.name}</p>
+              <p><strong>Model:</strong> ${data.model}</p>
+              <p><strong>Problem:</strong> ${data.problem}</p>
+              <p><strong>Status:</strong> <span style="color: #00ff88; font-weight: bold;">${data.status}</span></p>
+              <p style="font-size: 12px; color: #888; margin-top: 5px;">Date: ${data.date || 'N/A'}</p>
+            </div>
+          `;
+        } else {
+          statusBox.innerHTML = `<p style="color: #ff4d4d; font-weight: bold;">${data.message}</p>`;
+        }
+      } catch (err) {
+        console.error(err);
+        statusBox.innerHTML = `<p style="color: #ff4d4d; font-weight: bold;">Server Error! Check karein ki Terminal par 'node server.js' chal raha hai.</p>`;
+      }
+    }
+  </script>
+
+</body>
+</html>

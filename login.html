@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="hi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Login — Tech Point</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Modern Glass Login Styling */
+        .auth-container {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            color: #111;
+            text-align: center;
+        }
+        .login-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 4px;
+            border-radius: 12px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #555;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #ffffff;
+            color: #111;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.9);
+            color: #111;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            background: #111;
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 10px;
+        }
+        /* In-App OTP Popup Box */
+        .otp-display-box {
+            display: none;
+            background: #0071e3;
+            color: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="glass nav">
+        <a class="brand" href="index.html"><span>TECH</span> POINT</a>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="services.html">Services</a>
+            <a href="products.html">Products</a>
+            <a href="home-service.html">Home Service</a>
+            <a href="repair-status.html">Repair Status</a>
+        </nav>
+        <a class="pill" href="login.html">Login</a>
+    </header>
+
+    <main class="page">
+        <div class="auth-container">
+            <h2 style="margin-bottom: 5px;">Welcome Back</h2>
+            <p style="color: #666; font-size: 13px; margin-bottom: 20px;">Apna account login karein</p>
+            
+            <!-- Login Type Tabs -->
+            <div class="login-tabs">
+                <button type="button" class="tab-btn active" id="btnCustTab" onclick="switchTab('customer')">Customer</button>
+                <button type="button" class="tab-btn" id="btnAdminTab" onclick="switchTab('admin')">Admin Panel</button>
+            </div>
+
+            <!-- CUSTOMER LOGIN FORM -->
+            <form id="customerForm" onsubmit="loginUser(event)">
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="Apna email daalein" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Password daalein" required>
+                </div>
+                <button type="submit" class="btn-action">Login</button>
+                <p style="margin-top: 15px; font-size: 13px;"><a href="register.html" style="color: #0071e3;">Create account</a></p>
+            </form>
+
+            <!-- ADMIN OTP LOGIN FORM -->
+            <div id="adminArea" style="display: none;">
+                <!-- In-App Generated OTP Display -->
+                <div class="otp-display-box" id="otpDisplayBox">
+                    <span style="font-size: 12px; opacity: 0.9;">System Login Code:</span>
+                    <h1 id="generatedOtpCode" style="font-size: 2rem; margin: 4px 0; letter-spacing: 5px;">----</h1>
+                    <small style="font-size: 11px;">Is code ko niche daal kar verify karein</small>
+                </div>
+
+                <!-- Step 1: Admin Phone -->
+                <form id="adminPhoneForm" onsubmit="getAdminOTP(event)">
+                    <div class="input-group">
+                        <label>Admin Mobile Number</label>
+                        <input type="tel" id="adminPhone" placeholder="Registered mobile number" required>
+                    </div>
+                    <button type="submit" class="btn-action">Get Login OTP</button>
+                </form>
+
+                <!-- Step 2: Verify OTP -->
+                <form id="adminOtpForm" onsubmit="verifyAdminOTP(event)" style="display: none;">
+                    <div class="input-group">
+                        <label>Enter 4-Digit OTP</label>
+                        <input type="text" id="userOtp" maxlength="4" placeholder="X X X X" style="text-align: center; font-size: 18px; font-weight: bold; letter-spacing: 5px;" required>
+                    </div>
+                    <button type="submit" class="btn-action" style="background: #0071e3;">Verify & Open Dashboard</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="brand"><span>TECH</span> POINT</div>
+        <a href="agreement.html">Agreement</a>
+        <a href="terms.html">Terms</a>
+        <a href="privacy.html">Privacy</a>
+        <small>© 2026 Tech Point</small>
+    </footer>
+
+    <script>
+    // Tab Switch Logic
+    function switchTab(type) {
+        if(type === 'customer') {
+            document.getElementById('btnCustTab').classList.add('active');
+            document.getElementById('btnAdminTab').classList.remove('active');
+            document.getElementById('customerForm').style.display = 'block';
+            document.getElementById('adminArea').style.display = 'none';
+        } else {
+            document.getElementById('btnAdminTab').classList.add('active');
+            document.getElementById('btnCustTab').classList.remove('active');
+            document.getElementById('customerForm').style.display = 'none';
+            document.getElementById('adminArea').style.display = 'block';
+        }
+    }
+
+    // Customer Login Handler
+    async function loginUser(event) {
+        event.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch("http://localhost:5000/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                alert("Login Successful!");
+                window.location.href = "index.html";
+            } else {
+                alert(data.message || "Login failed! Email ya Password sahi nahi hai.");
+            }
+        } catch (error) {
+            alert("Server se connection nahi ho pa raha. Check karein server.js chal raha hai.");
+        }
+    }
+
+    // Admin In-App OTP Handlers
+    async function getAdminOTP(e) {
+        e.preventDefault();
+        const phone = document.getElementById("adminPhone").value.trim();
+
+        try {
+            const res = await fetch('http://localhost:5000/api/admin/generate-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                document.getElementById("generatedOtpCode").innerText = data.otp;
+                document.getElementById("otpDisplayBox").style.display = "block";
+                document.getElementById("adminPhoneForm").style.display = "none";
+                document.getElementById("adminOtpForm").style.display = "block";
+            } else {
+                alert(data.message || "Unauthorized Admin Number!");
+            }
+        } catch (err) {
+            alert("Server Offline hai!");
+        }
+    }
+
+    async function verifyAdminOTP(e) {
+        e.preventDefault();
+        const userOtp = document.getElementById("userOtp").value.trim();
+
+        try {
+            const res = await fetch('http://localhost:5000/api/admin/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userOtp })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                localStorage.setItem("adminAuthToken", data.token);
+                window.location.href = "admin.html";
+            } else {
+                alert("Galat OTP! Correct code daalein.");
+            }
+        } catch (err) {
+            alert("Verification failed!");
+        }
+    }
+    </script> 
+</body>
+</html>

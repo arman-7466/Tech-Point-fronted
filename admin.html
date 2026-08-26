@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Dashboard — Tech Point</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Stats Counter Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 16px;
+      padding: 20px;
+      color: #111;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+    .stat-card h3 { font-size: 14px; color: #555; margin-bottom: 5px; }
+    .stat-card .count { font-size: 2rem; font-weight: 800; color: #0071e3; }
+
+    /* Orders Table */
+    .table-container {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; color: #111; }
+    th, td { padding: 12px; border-bottom: 1px solid rgba(0, 0, 0, 0.08); font-size: 14px; }
+    th { background: rgba(0,0,0,0.03); font-weight: 700; }
+    
+    select.status-select {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fff;
+      font-weight: 600;
+    }
+    .btn-update {
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #0071e3;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="glass nav">
+    <a class="brand" href="index.html"><span>TECH</span> POINT</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="products.html">Products</a>
+      <a href="home-service.html">Home Service</a>
+      <a href="repair-status.html">Repair Status</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="page-title">
+      <span class="eyebrow">CONTROL PANEL</span>
+      <h1>Admin Dashboard</h1>
+    </div>
+
+    <!-- STATS COUNTERS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>New Bookings</h3>
+        <div class="count" id="cntNew">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Repairing</h3>
+        <div class="count" id="cntRepairing" style="color: #e67e22;">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Ready to Deliver</h3>
+        <div class="count" id="cntReady" style="color: #27ae60;">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Delivered</h3>
+        <div class="count" id="cntDelivered" style="color: #2c3e50;">0</div>
+      </div>
+    </div>
+
+    <!-- ALL ORDERS TABLE -->
+    <div class="table-container">
+      <h2>Recent Bookings & Repairs</h2>
+      <br>
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Item / Issue</th>
+            <th>Current Status</th>
+            <th>Change Status</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+          <!-- Data populated via JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+// 1. Fetch and Display All Bookings
+async function loadAdminData() {
+    try {
+        const response = await fetch("http://localhost:5000/api/get-all-data");
+        const data = await response.json();
+        const bookings = data.bookings || [];
+
+        const tableBody = document.getElementById("adminTableBody"); // Apne table body ki ID se match karein
+        if(!tableBody) return;
+
+        tableBody.innerHTML = "";
+
+        let pendingCount = 0;
+        let readyCount = 0;
+        let deliveredCount = 0;
+
+        bookings.forEach((item, index) => {
+            const currentStatus = item.status || "Pending";
+            
+            if(currentStatus === "Pending") pendingCount++;
+            if(currentStatus === "Ready to Deliver" || currentStatus === "Ready") readyCount++;
+            if(currentStatus === "Delivered") deliveredCount++;
+
+            const idToUse = item.jobId || item.orderId || "";
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${idToUse}</td>
+                    <td>${item.name || "N/A"}</td>
+                    <td>${item.phone || "N/A"}</td>
+                    <td>${item.problem || item.model || "Repair"}</td>
+                    <td><strong id="status-text-${index}">${currentStatus}</strong></td>
+                    <td>
+                        <select id="select-status-${index}">
+                            <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Ready to Deliver" ${currentStatus === 'Ready to Deliver' ? 'selected' : ''}>Ready to Deliver</option>
+                            <option value="Delivered" ${currentStatus === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn" onclick="saveStatus('${idToUse}', ${index})">Save</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        // Update Stat Cards
+        if(document.getElementById("pendingCount")) document.getElementById("pendingCount").innerText = pendingCount;
+        if(document.getElementById("readyCount")) document.getElementById("readyCount").innerText = readyCount;
+        if(document.getElementById("deliveredCount")) document.getElementById("deliveredCount").innerText = deliveredCount;
+
+    } catch (error) {
+        console.error("Data load error:", error);
+    }
+}
+
+// 2. Fixed Save Status Function
+async function saveStatus(jobId, index) {
+    const selectBox = document.getElementById(`select-status-${index}`);
+    const newStatus = selectBox.value;
+
+    if (!jobId) {
+        alert("Error: Job ID / Order ID nahi mila!");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:5000/api/update-status", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                jobId: jobId,
+                orderId: jobId,
+                newStatus: newStatus,
+                status: newStatus
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Status Successfully Saved!");
+            loadAdminData(); // Refresh list to update counters
+        } else {
+            alert("Failed: " + (result.message || "Status update nahi ho paya."));
+        }
+    } catch (error) {
+        console.error("Save error:", error);
+        alert("Server se connect nahi ho paya. Make sure server.js chalu hai.");
+    }
+}
+
+// Auto Load on Page Open
+window.onload = loadAdminData;
+</script>
+</body>
+</html>

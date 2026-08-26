@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mobile Covers Collection — Tech Point</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* BRAND TABS VISIBILITY FIX */
+    .filter-tabs {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 10px 5px;
+      margin: 20px 0;
+    }
+    .tab-btn {
+      background: rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      color: #111111 !important; /* Always visible text */
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease-in-out;
+    }
+    .tab-btn:hover {
+      background: rgba(0, 0, 0, 0.12);
+    }
+    .tab-btn.active {
+      background: #111111 !important;
+      color: #ffffff !important;
+      border-color: #111111;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* GRID & CARDS */
+    .covers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+    .cover-card {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .cover-card:hover {
+      transform: translateY(-4px);
+    }
+    .cover-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      background: rgba(0, 0, 0, 0.08);
+      color: #333;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .price-tag {
+      color: #111111;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 8px 0 12px 0;
+    }
+
+    /* LIQUID GLASS MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content.liquid-glass {
+      width: 90%;
+      max-width: 420px;
+      padding: 28px;
+      border-radius: 24px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(25px) saturate(190%);
+      -webkit-backdrop-filter: blur(25px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+      color: #111;
+    }
+    .modal-content.liquid-glass h2 {
+      color: #111;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+    .modal-content.liquid-glass label {
+      display: block;
+      color: #444;
+      font-weight: 600;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+    .modal-content.liquid-glass input, 
+    .modal-content.liquid-glass textarea {
+      width: 100%;
+      padding: 12px 14px;
+      margin-top: 5px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.7);
+      color: #111;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .modal-content.liquid-glass input:focus, 
+    .modal-content.liquid-glass textarea:focus {
+      background: #ffffff;
+      border-color: #0071e3;
+      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+    }
+    .btn-submit {
+      width: 100%;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #0071e3;
+      color: #fff;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .btn-submit:hover {
+      background: #005bb5;
+    }
+    .btn-cancel {
+      width: 100%;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.05);
+      color: #555;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="glass nav">
+    <a class="brand" href="index.html"><span>TECH</span> POINT</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="products.html">Products</a>
+      <a href="home-service.html">Home Service</a>
+      <a href="repair-status.html">Repair Status</a>
+    </nav>
+    <a class="pill" href="login.html">Login</a>
+  </header>
+
+  <main class="page">
+    <div class="page-title">
+      <span class="eyebrow">PREMIUM CASES</span>
+      <h1>Mobile Cover Collection</h1>
+      <p>Apne phone model ke hisab se cover select karein aur online book karein.</p>
+    </div>
+
+    <!-- Category Tabs (Fix applied) -->
+    <div class="filter-tabs">
+      <button class="tab-btn active" onclick="filterCovers('all', this)">All Models</button>
+      <button class="tab-btn" onclick="filterCovers('iphone', this)">iPhone</button>
+      <button class="tab-btn" onclick="filterCovers('samsung', this)">Samsung</button>
+      <button class="tab-btn" onclick="filterCovers('realme', this)">Realme</button>
+      <button class="tab-btn" onclick="filterCovers('redmi', this)">Redmi / Xiaomi</button>
+      <button class="tab-btn" onclick="filterCovers('vivo', this)">Vivo / Oppo</button>
+    </div>
+
+    <!-- Cover Grid Container -->
+    <div class="covers-grid" id="coversContainer"></div>
+  </main>
+
+  <!-- LIQUID GLASS MODAL POPUP -->
+  <div class="modal" id="orderModal">
+    <div class="modal-content liquid-glass">
+      <h2 id="modalTitle">Order Cover</h2>
+      <form onsubmit="submitOrder(event)">
+        <input type="hidden" id="selectedCover">
+
+        <label>Selected Item</label>
+        <input type="text" id="displayCoverName" readonly style="font-weight: 600; color: #333;">
+
+        <label>Your Name</label>
+        <input type="text" id="custName" placeholder="Apna naam daalein" required>
+
+        <label>Phone Number</label>
+        <input type="tel" id="custPhone" placeholder="Mobile number" required>
+
+        <label>Address / Store Pickup</label>
+        <textarea id="custAddress" placeholder="Pata daalein ya Store Pickup likhein" rows="2"></textarea>
+
+        <button type="submit" class="btn-submit">Confirm & WhatsApp</button>
+        <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="brand"><span>TECH</span> POINT</div>
+    <a href="agreement.html">Agreement</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+    <small>© 2026 Tech Point</small>
+  </footer>
+
+  <script>
+    const shopWhatsappNumber = "919000000000";
+
+    const coversData = [
+      { id: 1, brand: "iphone", name: "iPhone 13 / 14 Glass Case", price: "₹299", image: "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&q=80", desc: "Camera Ring & Glass Back Finish" },
+      { id: 2, brand: "iphone", name: "iPhone 15 Pro Magsafe Case", price: "₹399", image: "https://images.unsplash.com/photo-1541877944-ac82a091518a?w=400&q=80", desc: "Magnetic Wireless Charging Support" },
+      { id: 3, brand: "samsung", name: "Samsung S23 Ultra Armor Case", price: "₹349", image: "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&q=80", desc: "Heavy Protection with Kickstand" },
+      { id: 4, brand: "samsung", name: "Samsung A54 Matte Case", price: "₹199", image: "https://images.unsplash.com/photo-1603313011101-320f26a4f6f6?w=400&q=80", desc: "Soft Touch Anti-Fingerprint Cover" },
+      { id: 5, brand: "realme", name: "Realme 11 Pro Chrome Case", price: "₹249", image: "https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=400&q=80", desc: "Glossy Metallic Edges Design" },
+      { id: 6, brand: "redmi", name: "Redmi Note 12 Pro Silicone Case", price: "₹199", image: "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&q=80", desc: "Inner Velvet Lining & Soft Grip" },
+      { id: 7, brand: "vivo", name: "Vivo V29 / V27 Transparent Case", price: "₹179", image: "https://images.unsplash.com/photo-1574944985070-8f30c4397e3c?w=400&q=80", desc: "Non-Yellowing Clear Bumper" },
+      { id: 8, brand: "redmi", name: "Redmi 12 5G Leather Texture Case", price: "₹229", image: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=400&q=80", desc: "Premium Leather Finish Look" }
+    ];
+
+    function renderCovers(data) {
+      const container = document.getElementById("coversContainer");
+      if (data.length === 0) {
+        container.innerHTML = `<p style="color: #666; grid-column: 1/-1;">Is category mein abhi covers available nahi hain.</p>`;
+        return;
+      }
+
+      container.innerHTML = data.map(item => `
+        <div class="cover-card glass">
+          <img src="${item.image}" alt="${item.name}">
+          <span class="badge">${item.brand.toUpperCase()}</span>
+          <h3 style="color:#111; font-size:1.1rem;">${item.name}</h3>
+          <p style="font-size: 13px; color: #666; margin: 4px 0;">${item.desc}</p>
+          <div class="price-tag">${item.price}</div>
+          <button class="btn" onclick="openModal('${item.name}')" style="width: 100%;">Buy / Book Now</button>
+        </div>
+      `).join('');
+    }
+
+    function filterCovers(category, btnElement) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+
+      if (category === 'all') {
+        renderCovers(coversData);
+      } else {
+        const filtered = coversData.filter(item => item.brand === category);
+        renderCovers(filtered);
+      }
+    }
+
+    function openModal(coverName) {
+      document.getElementById("selectedCover").value = coverName;
+      document.getElementById("displayCoverName").value = coverName;
+      document.getElementById("orderModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("orderModal").style.display = "none";
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      const prodName = document.getElementById("selectedCover").value;
+      const name = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const address = document.getElementById("custAddress").value.trim() || "Store Pickup";
+
+      try {
+        const res = await fetch('http://localhost:5000/api/order-product', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productName: "Cover: " + prodName, name, phone, address })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert(`Cover Order Booked! Order ID: ${data.orderId}`);
+          closeModal();
+
+          const message = `*Tech Point — Cover Order*%0A%0A` +
+            `*Order ID:* ${data.orderId}%0A` +
+            `*Model/Cover:* ${prodName}%0A` +
+            `*Name:* ${name}%0A` +
+            `*Phone:* ${phone}%0A` +
+            `*Address:* ${address}`;
+
+          const isMobile = /Android|iPhone/i.test(navigator.userAgent);
+          const waUrl = isMobile 
+            ? `https://wa.me/${shopWhatsappNumber}?text=${message}`
+            : `https://web.whatsapp.com/send?phone=${shopWhatsappNumber}&text=${message}`;
+
+          window.location.href = waUrl;
+        }
+      } catch (err) {
+        alert("Server Error! Check karein terminal par 'node server.js' chal raha hai.");
+      }
+    }
+
+    renderCovers(coversData);
+  </script>
+</body>
+</html>

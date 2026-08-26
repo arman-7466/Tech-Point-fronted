@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Home Service — Tech Point</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="glass nav">
+    <a class="brand" href="index.html"><span>TECH</span> POINT</a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="products.html">Products</a>
+      <a href="home-service.html">Home Service</a>
+      <a href="repair-status.html">Repair Status</a>
+    </nav>
+    <a class="pill" href="login.html">Login</a>
+  </header>
+
+  <main class="page">
+    <div class="page-title">
+      <span class="eyebrow">DOORSTEP</span>
+      <h1>Home Service Booking</h1>
+      <p>Apna phone ghar baithe repair karwayein. Form bharein aur WhatsApp par confirm karein.</p>
+    </div>
+
+    <form class="glass booking" id="bookingForm" onsubmit="book(event)">
+      <label>
+        Full Name
+        <input type="text" id="name" placeholder="Apna naam likhein" required>
+      </label>
+
+      <label>
+        Phone Number
+        <input type="tel" id="phone" placeholder="Mobile number" required>
+      </label>
+
+      <label>
+        Phone Model
+        <input type="text" id="model" placeholder="Example: iPhone 13, Redmi Note 10" required>
+      </label>
+
+      <label>
+        Problem Description
+        <textarea id="problem" rows="3" placeholder="Phone me kya dikkat hai?" required></textarea>
+      </label>
+
+      <label>
+        Pickup Address
+        <textarea id="address" rows="2" placeholder="Poora pata likhein" required></textarea>
+      </label>
+
+      <button type="submit" class="btn" style="margin-top: 15px;">WhatsApp par Booking Bhejein</button>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="brand"><span>TECH</span> POINT</div>
+    <a href="agreement.html">Agreement</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
+    <small>© 2026 Tech Point</small>
+  </footer>
+
+  <script>
+    async function book(e) {
+      e.preventDefault();
+
+      // YAHAN APNA WHATSAPP NUMBER SET KAREIN (e.g. 919876543210)
+      const shopWhatsappNumber = "919528290865"; 
+
+      const data = {
+        name: document.getElementById("name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        model: document.getElementById("model").value.trim(),
+        problem: document.getElementById("problem").value.trim(),
+        address: document.getElementById("address").value.trim()
+      };
+
+      try {
+        // Backend API par data bhej rahe hain
+        const response = await fetch('http://localhost:5000/api/booking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const resData = await response.json();
+
+        if (resData.success) {
+          alert(`Booking Confirmed! Aapka Job ID hai: ${resData.jobId}`);
+
+          // Pre-filled WhatsApp Message
+          const message = `*Tech Point — New Repair Request*%0A%0A` +
+            `*Job ID:* ${resData.jobId}%0A` +
+            `*Name:* ${data.name}%0A` +
+            `*Phone:* ${data.phone}%0A` +
+            `*Model:* ${data.model}%0A` +
+            `*Problem:* ${data.problem}%0A` +
+            `*Address:* ${data.address}`;
+
+          // Mobile vs Desktop Detection
+          const isMobile = /Android|iPhone/i.test(navigator.userAgent);
+          const waUrl = isMobile 
+            ? `https://wa.me/${shopWhatsappNumber}?text=${message}`
+            : `https://web.whatsapp.com/send?phone=${shopWhatsappNumber}&text=${message}`;
+
+          // Direct WhatsApp Open
+          window.open(waUrl, '_blank');
+        } else {
+          alert("Booking submit nahi ho paayi. Phir se try karein.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Server Error! Check karein ki 'node server.js' chal raha hai ya nahi.");
+      }
+    }
+  </script>
+
+</body>
+</html>
