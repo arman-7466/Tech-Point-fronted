@@ -1,6 +1,6 @@
 FROM node:18-slim
 
-# Install Chromium and dependencies
+# Install Chromium and required system dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
     fonts-liberation \
@@ -14,14 +14,14 @@ RUN apt-get update && apt-get install -y \
     libexpat1 \
     libfontconfig1 \
     libgbm1 \
-    libgcc1 \
+    libgcc-s1 \
     libglib2.0-0 \
     libgtk-3-0 \
     libnspr4 \
-    nss-utils \
+    libnss3 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
-    stdc++6 \
+    libstdc++6 \
     libx11-6 \
     libx11-xcb1 \
     libxcb1 \
