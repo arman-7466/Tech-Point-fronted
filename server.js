@@ -4,10 +4,21 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 
-const { Client, LocalAuth } = require("whatsapp-web.js");
-const QRCode = require("qrcode");
+const { Client, LocalAuth } = require('whatsapp-web.js');
 
-const app = express();
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu'
+        ]
+    }
+});
 
 // =====================================================
 // BASIC SETTINGS
